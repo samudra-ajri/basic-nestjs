@@ -13,9 +13,20 @@ import {
 } from '@nestjs/common';
 import type { HttpRedirectResponse } from '@nestjs/common';
 import type { Request, Response } from 'express';
+import { UserService } from './user.service';
 
 @Controller('/api/users')
 export class UserController {
+  constructor(private service: UserService) {}
+
+  @Get('/hello')
+  sayHello(
+    @Query('first_name') firstName: string,
+    @Query('last_name') lastName: string,
+  ): string {
+    return this.service.sayHello(firstName, lastName);
+  }
+
   @Get('/view/hello')
   viewHello(@Query('name') name: string, @Res() response: Response) {
     response.render('index.html', {
@@ -46,14 +57,6 @@ export class UserController {
   @Redirect()
   redirect(): HttpRedirectResponse {
     return { url: '/api/users/sample-response', statusCode: 302 };
-  }
-
-  @Get('/hello')
-  sayHello(
-    @Query('first_name') firstName: string,
-    @Query('last_name') lastName: string,
-  ): string {
-    return `Hello ${firstName} ${lastName}`;
   }
 
   // @Get('/hello')
